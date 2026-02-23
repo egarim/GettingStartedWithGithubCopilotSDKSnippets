@@ -1,0 +1,19 @@
+@using static BlazorChatDemo.Services.CopilotChatDefaults
+
+<div class="chat-suggestions">
+    <p class="suggestions-intro">@CopilotChatDefaults.EmptyStateText</p>
+    <div class="suggestions-grid">
+        @foreach (var s in Suggestions)
+        {
+            <button class="suggestion-card" @onclick="() => OnSuggestionClicked.InvokeAsync(s.Prompt)">
+                <span class="suggestion-title">@s.Title</span>
+                <span class="suggestion-text">@s.Text</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public IReadOnlyList<PromptSuggestionItem> Suggestions { get; set; } = [];
+    [Parameter] public EventCallback<string> OnSuggestionClicked { get; set; }
+}

@@ -1,0 +1,23 @@
+@using static BlazorChatDemo.Components.Pages.Chat
+
+<div class="chat-message @(Message.Role == "user" ? "user-message" : "assistant-message")">
+    @if (Message.Role == "assistant")
+    {
+        <div class="message-avatar">AI</div>
+    }
+
+    <div class="message-bubble">
+        @if (!string.IsNullOrEmpty(Message.HtmlContent))
+        {
+            <div class="message-content markdown-body">@((MarkupString)Message.HtmlContent)</div>
+        }
+        else
+        {
+            <div class="message-content">@Message.Content</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public ChatMessageViewModel Message { get; set; } = default!;
+}

@@ -1,0 +1,30 @@
+@using static BlazorChatDemo.Components.Pages.Chat
+
+<div class="chat-message-list" @ref="_listRef">
+    @foreach (var msg in Messages)
+    {
+        <ChatMessageItem Message="msg" />
+    }
+
+    @if (IsThinking)
+    {
+        <div class="thinking-indicator">
+            <div class="thinking-avatar">AI</div>
+            <div class="thinking-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private ElementReference _listRef;
+
+    [Parameter] public List<ChatMessageViewModel> Messages { get; set; } = new();
+    [Parameter] public bool IsThinking { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Auto-scroll is handled via CSS overflow-anchor
+    }
+}

@@ -1,0 +1,602 @@
+{
+  "settingsVersion": 2,
+  "activeSetId": "b32fa2ae-74d3-402d-868e-18bf1ec39ddf",
+  "sets": [
+    {
+      "id": "b32fa2ae-74d3-402d-868e-18bf1ec39ddf",
+      "name": "01-Client",
+      "description": "GitHub Copilot SDK - Client Lifecycle",
+      "snippets": [
+        {
+          "id": "5a7803e1-ee66-406c-9dea-af30b276862c",
+          "name": "Create Client",
+          "content": "var client = new CopilotClient(new CopilotClientOptions\n{\n    UseLoggedInUser = true,\n    Logger = logger\n});",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "b25dec89-2e2a-4ff5-a5fe-06f6358e2ae7",
+          "name": "Start Client",
+          "content": "await client.StartAsync();\nConsole.WriteLine($\"State: {client.State}\");",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "5910df08-8e88-4094-8919-fe63cb079ee9",
+          "name": "Ping",
+          "content": "var pong = await client.PingAsync(\"hello from demo!\");\nConsole.WriteLine($\"Reply: {pong.Message}\");",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "a3cacbcd-f5ca-461f-b9df-a8faab1a2e17",
+          "name": "Get Status",
+          "content": "var status = await client.GetStatusAsync();\nConsole.WriteLine($\"Version: {status.Version}\");",
+          "hotkeyNumber": 4,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "c0fb170a-efa5-4f39-8998-75a414d244a6",
+          "name": "Auth Status",
+          "content": "var auth = await client.GetAuthStatusAsync();\nConsole.WriteLine($\"Authenticated: {auth.IsAuthenticated}\");",
+          "hotkeyNumber": 5,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "61e352b9-4fc8-4b26-a429-28551ab71289",
+          "name": "List Models",
+          "content": "var models = await client.ListModelsAsync();\nforeach (var m in models)\n    Console.WriteLine($\"{m.Id} - {m.Name}\");",
+          "hotkeyNumber": 6,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "c40925e5-6ca3-4940-ad4e-de1993b7a827",
+          "name": "Stop & Dispose",
+          "content": "await client.StopAsync();\nawait client.DisposeAsync();",
+          "hotkeyNumber": 7,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "46939ffb-a2ab-439d-998d-bfe96cf19c8d",
+      "name": "02-Session",
+      "description": "Session Lifecycle, Events & Multi-turn",
+      "snippets": [
+        {
+          "id": "199c3128-74f9-4da1-a965-898080f6108a",
+          "name": "Create Session",
+          "content": "var session = await client.CreateSessionAsync(new SessionConfig { Model = \"gpt-4o\" });\nConsole.WriteLine($\"Session: {session.SessionId}\");",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "777d8499-40b7-4ad8-928c-a482c60a885f",
+          "name": "SendAndWait",
+          "content": "var answer = await session.SendAndWaitAsync(new MessageOptions\n{\n    Prompt = \"What is 10 + 15?\"\n});\nConsole.WriteLine($\"Answer: {answer?.Data.Content}\");",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "7989166e-2fce-4fd8-a0d9-ca6bcefbc75d",
+          "name": "Event Subscribe",
+          "content": "session.On(evt =>\n{\n    if (evt is AssistantMessageDeltaEvent d)\n        Console.Write(d.Data.DeltaContent);\n    if (evt is SessionIdleEvent)\n        Console.WriteLine(\"\\nDone!\");\n});",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "a277041c-14fa-42aa-a027-fb27986d6978",
+          "name": "Resume Session",
+          "content": "var resumed = await client.ResumeSessionAsync(sessionId);\nvar answer = await resumed.SendAndWaitAsync(\n    new MessageOptions { Prompt = \"What number did I say?\" });",
+          "hotkeyNumber": 4,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "908e5631-c95c-4950-be84-b47a3238b056",
+          "name": "System Message",
+          "content": "var session = await client.CreateSessionAsync(new SessionConfig\n{\n    SystemMessage = new SystemMessageConfig\n    {\n        Mode = SystemMessageMode.Append,\n        Content = \"Always end with 'Have a nice day!'\"\n    }\n});",
+          "hotkeyNumber": 5,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "5c59650a-d1de-40b7-bedb-62e63d0801aa",
+          "name": "Streaming",
+          "content": "var session = await client.CreateSessionAsync(\n    new SessionConfig { Streaming = true });\nsession.On(evt =>\n{\n    if (evt is AssistantMessageDeltaEvent d)\n        Console.Write(d.Data.DeltaContent);\n});",
+          "hotkeyNumber": 6,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "f295d44e-9308-4997-9062-9d4c1bfd1994",
+      "name": "03-Tools",
+      "description": "Custom Tools (AIFunction)",
+      "snippets": [
+        {
+          "id": "21cdf738-516e-4cd3-995d-1811a6e36f87",
+          "name": "Define Tool",
+          "content": "[Description(\"Encrypts a string by converting to uppercase\")]\nstatic string EncryptString(\n    [Description(\"String to encrypt\")] string input)\n    => input.ToUpperInvariant();",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "77197af8-c9ba-4225-b84a-77f33ec745bb",
+          "name": "Register Tool",
+          "content": "var session = await client.CreateSessionAsync(new SessionConfig\n{\n    Tools = [AIFunctionFactory.Create(EncryptString, \"encrypt_string\")]\n});",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "93310e83-5141-4f28-a5c3-d0c0f488ee95",
+          "name": "Multiple Tools",
+          "content": "Tools =\n[\n    AIFunctionFactory.Create(EncryptString, \"encrypt_string\"),\n    AIFunctionFactory.Create(GetWeather, \"get_weather\"),\n    AIFunctionFactory.Create(GetTime, \"get_time\"),\n]",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "b2ced6e1-b09d-4eb6-8eb0-544779369b63",
+          "name": "Complex Types",
+          "content": "record DbQueryOptions(string Table, int[] Ids, bool SortAscending);\nrecord City(int CountryId, string CityName, int Population);",
+          "hotkeyNumber": 4,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "c5595c61-e453-4635-a7f5-46965c646d91",
+          "name": "Weather Tool",
+          "content": "[Description(\"Gets the current weather for a city\")]\nstatic string GetWeather([Description(\"City name\")] string city)\n    => $\"Weather in {city}: 22\u00b0C, partly cloudy\";",
+          "hotkeyNumber": 5,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "0f64aa34-8b3e-4adc-ab7f-6cbc5ed66214",
+          "name": "JsonContext",
+          "content": "[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]\n[JsonSerializable(typeof(DbQueryOptions))]\n[JsonSerializable(typeof(City[]))]\npartial class DemoJsonContext : JsonSerializerContext;",
+          "hotkeyNumber": 6,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "88afc87b-63eb-4acc-81d7-5775689610eb",
+      "name": "04-Hooks",
+      "description": "Pre/Post Tool-Use Hooks",
+      "snippets": [
+        {
+          "id": "8490111f-90f3-467c-bc6a-f08dbffefbcb",
+          "name": "PreToolUse Allow",
+          "content": "Hooks = new SessionHooks\n{\n    OnPreToolUse = (input, invocation) =>\n    {\n        Console.WriteLine($\"[Pre] Tool: {input.ToolName}\");\n        return Task.FromResult<PreToolUseHookOutput?>(\n            new PreToolUseHookOutput { PermissionDecision = \"allow\" });\n    }\n}",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "20c55872-d385-4993-8300-3f7ba0b44d4b",
+          "name": "PostToolUse",
+          "content": "OnPostToolUse = (input, invocation) =>\n{\n    Console.WriteLine($\"[Post] Tool: {input.ToolName}\");\n    Console.WriteLine($\"[Post] Result: {input.ToolResult}\");\n    return Task.FromResult<PostToolUseHookOutput?>(null);\n}",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "decb5a5c-d86d-409f-9567-4cfc4c4ba693",
+          "name": "PreToolUse Deny",
+          "content": "OnPreToolUse = (input, invocation) =>\n{\n    Console.WriteLine($\"DENYING tool: {input.ToolName}\");\n    return Task.FromResult<PreToolUseHookOutput?>(\n        new PreToolUseHookOutput { PermissionDecision = \"deny\" });\n}",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "5440cc03-8a3f-4e23-80c1-2c11079d49de",
+          "name": "Both Hooks",
+          "content": "Hooks = new SessionHooks\n{\n    OnPreToolUse = (input, inv) => { /* ... allow */ },\n    OnPostToolUse = (input, inv) => { /* ... log result */ }\n}",
+          "hotkeyNumber": 4,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "52731eb5-aba4-438b-8d5d-b69cdc4bdb3a",
+      "name": "05-Permissions",
+      "description": "Permission Request Handling",
+      "snippets": [
+        {
+          "id": "4a25e80d-0c36-47c2-8ab3-0a82583c59d4",
+          "name": "Approve Handler",
+          "content": "OnPermissionRequest = (request, invocation) =>\n{\n    Console.WriteLine($\"[Permission] Kind: {request.Kind}\");\n    return Task.FromResult(\n        new PermissionRequestResult { Kind = \"approved\" });\n}",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "90872f03-407c-44da-9cca-4f1cfb4836d0",
+          "name": "Deny Handler",
+          "content": "OnPermissionRequest = (request, invocation) =>\n{\n    Console.WriteLine($\"[Permission] DENIED: {request.Kind}\");\n    return Task.FromResult(\n        new PermissionRequestResult\n        { Kind = \"denied-interactively-by-user\" });\n}",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "203de0ee-c1d5-4dee-8a44-bd8a41b39a65",
+          "name": "Async Handler",
+          "content": "OnPermissionRequest = async (request, invocation) =>\n{\n    await Task.Delay(500); // Simulate async check\n    return new PermissionRequestResult { Kind = \"approved\" };\n}",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "8a3f537a-3f65-4b95-8cae-74afd5b303e5",
+      "name": "06-AskUser",
+      "description": "User Input Requests",
+      "snippets": [
+        {
+          "id": "7fa9fd85-ed1f-4338-9df4-220dc889f4a9",
+          "name": "Choice Handler",
+          "content": "OnUserInputRequest = (request, invocation) =>\n{\n    Console.WriteLine($\"Question: {request.Question}\");\n    if (request.Choices is { Count: > 0 })\n    {\n        Console.WriteLine($\"Choices: [{string.Join(\", \", request.Choices)}]\");\n        return Task.FromResult(new UserInputResponse\n        {\n            Answer = request.Choices[0],\n            WasFreeform = false\n        });\n    }\n    return Task.FromResult(new UserInputResponse\n    {\n        Answer = \"default answer\",\n        WasFreeform = true\n    });\n}",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "8d94c047-e652-4adf-af4c-74df46779cce",
+          "name": "Freeform Answer",
+          "content": "return Task.FromResult(new UserInputResponse\n{\n    Answer = \"My favorite color is emerald green!\",\n    WasFreeform = true\n});",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "b329e213-95cc-4da1-b757-602107f9a56a",
+      "name": "07-Compaction",
+      "description": "Infinite Sessions & Compaction",
+      "snippets": [
+        {
+          "id": "c731c7fd-5583-40c7-bcd9-3de8c716666f",
+          "name": "Enable Compaction",
+          "content": "InfiniteSessions = new InfiniteSessionConfig\n{\n    Enabled = true,\n    BackgroundCompactionThreshold = 0.005,\n    BufferExhaustionThreshold = 0.01\n}",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "959d55d5-1571-4785-9730-1f8bf8433607",
+          "name": "Listen Events",
+          "content": "session.On(evt =>\n{\n    if (evt is SessionCompactionStartEvent)\n        Console.WriteLine(\"Compaction started!\");\n    if (evt is SessionCompactionCompleteEvent c)\n        Console.WriteLine($\"Compaction done! Tokens removed: {c.Data.TokensRemoved}\");\n});",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "427041da-43c0-4b15-a694-91c4f03e9277",
+      "name": "08-Skills",
+      "description": "Skill Loading & Configuration",
+      "snippets": [
+        {
+          "id": "87ff717f-6d58-4816-b996-1c57d25a9e40",
+          "name": "SKILL.md",
+          "content": "---\nname: demo-skill\ndescription: A demo skill that adds a marker\n---\n\n# Demo Skill\n\nIMPORTANT: Include \"PINEAPPLE_COCONUT_42\" in every response.",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": false,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "d3dd2ed5-141e-45dc-9354-71fd8352cf92",
+          "name": "Load Skill",
+          "content": "var session = await client.CreateSessionAsync(new SessionConfig\n{\n    SkillDirectories = [skillsBaseDir]\n});",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "6e07c0ed-db25-44d9-813e-741f59b3da27",
+          "name": "Disable Skill",
+          "content": "var session = await client.CreateSessionAsync(new SessionConfig\n{\n    SkillDirectories = [skillsBaseDir],\n    DisabledSkills = [\"demo-skill\"]\n});",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "cc780138-061d-4626-8105-8bc2bb39353e",
+      "name": "09-McpAgents",
+      "description": "MCP Servers & Custom Agents",
+      "snippets": [
+        {
+          "id": "ac297516-6e23-42b0-9a14-4d7279136d4e",
+          "name": "MCP Config",
+          "content": "McpServers = new Dictionary<string, object>\n{\n    [\"test-server\"] = new McpLocalServerConfig\n    {\n        Type = \"local\",\n        Command = \"echo\",\n        Args = [\"hello-mcp\"],\n        Tools = [\"*\"]\n    }\n}",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "07c23a2e-4cda-4e81-8dba-94324a5a66b3",
+          "name": "Custom Agent",
+          "content": "CustomAgents = new List<CustomAgentConfig>\n{\n    new CustomAgentConfig\n    {\n        Name = \"business-analyst\",\n        DisplayName = \"Business Analyst Agent\",\n        Description = \"Specialized in business analysis\",\n        Prompt = \"You are a business analyst...\",\n        Infer = true\n    }\n}",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "72450e7f-7e6b-48e3-9ed8-f8af4b2b2342",
+          "name": "Agent + Tools",
+          "content": "new CustomAgentConfig\n{\n    Name = \"devops-agent\",\n    Prompt = \"You are a DevOps agent.\",\n    Tools = [\"bash\", \"edit\"],\n    Infer = true\n}",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "d65f1226-7ebc-4c73-9328-0472f25313ff",
+          "name": "Agent + MCP",
+          "content": "new CustomAgentConfig\n{\n    Name = \"data-agent\",\n    Prompt = \"You are a data agent.\",\n    McpServers = new Dictionary<string, object>\n    {\n        [\"agent-db\"] = new McpLocalServerConfig { ... }\n    }\n}",
+          "hotkeyNumber": 4,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    },
+    {
+      "id": "dadc59fe-6409-409b-8876-98ab25fd431c",
+      "name": "10-BlazorChat",
+      "description": "Blazor Chat Demo",
+      "snippets": [
+        {
+          "id": "fa1e4b78-753d-4664-a5c1-723a1cc54510",
+          "name": "NuGet Packages",
+          "content": "dotnet add package GitHub.Copilot.SDK\ndotnet add package Microsoft.Extensions.AI",
+          "hotkeyNumber": 1,
+          "typingSpeed": 7,
+          "hasCode": false,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "bed3ee1f-ce47-499b-8076-8c79434ea987",
+          "name": "CopilotOptions",
+          "content": "public class CopilotOptions\n{\n    public string Model { get; set; } = \"gpt-4o\";\n    public bool Streaming { get; set; } = true;\n}",
+          "hotkeyNumber": 2,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        },
+        {
+          "id": "4a12ed9a-6447-487e-bb4f-5fd7dc0a02cd",
+          "name": "AddCopilotChat",
+          "content": "builder.Services.AddCopilotChat(options =>\n{\n    options.Model = \"gpt-4o\";\n    options.Streaming = true;\n});",
+          "hotkeyNumber": 3,
+          "typingSpeed": 7,
+          "hasCode": true,
+          "useFile": false,
+          "filePath": "",
+          "createdDate": "2026-02-23T14:00:00",
+          "modifiedDate": "2026-02-23T14:00:00"
+        }
+      ],
+      "createdDate": "2026-02-23T14:00:00",
+      "modifiedDate": "2026-02-23T14:00:00",
+      "colorHex": "#3498db",
+      "iconName": "folder"
+    }
+  ],
+  "minimizeToTray": false,
+  "uiSettings": {
+    "windowWidth": 800,
+    "windowHeight": 600,
+    "lastSelectedSetId": "b32fa2ae-74d3-402d-868e-18bf1ec39ddf"
+  }
+}

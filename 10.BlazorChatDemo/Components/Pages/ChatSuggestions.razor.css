@@ -1,0 +1,58 @@
+.chat-suggestions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 24px;
+    overflow-y: auto;
+}
+
+.suggestions-intro {
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-bottom: 28px;
+    white-space: pre-line;
+}
+
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    max-width: 640px;
+    width: 100%;
+}
+
+.suggestion-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid #e0e0e8;
+    border-radius: 12px;
+    background: #fafbfc;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+
+.suggestion-card:hover {
+    background: #eef1f8;
+    border-color: #4361ee;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.12);
+}
+
+.suggestion-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #4361ee;
+}
+
+.suggestion-text {
+    font-size: 0.8rem;
+    color: #666;
+}

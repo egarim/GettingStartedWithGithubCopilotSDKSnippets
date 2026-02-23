@@ -1,0 +1,32 @@
+<div class="chat-input-container">
+    <form @onsubmit="HandleSubmit" class="chat-input-form">
+        <input @bind="_inputText"
+               @bind:event="oninput"
+               type="text"
+               class="chat-input"
+               placeholder="Type your message…"
+               disabled="@IsDisabled"
+               autocomplete="off" />
+        <button type="submit" class="chat-send-btn" disabled="@(IsDisabled || string.IsNullOrWhiteSpace(_inputText))">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+            </svg>
+        </button>
+    </form>
+</div>
+
+@code {
+    private string? _inputText;
+
+    [Parameter] public EventCallback<string> OnMessageSent { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(_inputText) || IsDisabled) return;
+
+        var message = _inputText.Trim();
+        _inputText = string.Empty;
+        await OnMessageSent.InvokeAsync(message);
+    }
+}

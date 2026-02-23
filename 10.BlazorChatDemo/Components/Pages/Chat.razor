@@ -1,0 +1,136 @@
+@page "/"
+@using Microsoft.Extensions.AI
+@inject IChatClient ChatClient
+
+<div class="chat-app">
+    <SessionSidebar Sessions="_sessions.AsReadOnly()"
+                    ActiveSessionId="@_activeSessionId"
+                    OnNewChat="HandleNewChat"
+                    OnSessionSelected="HandleSessionSelected"
+                    OnSessionDeleted="HandleSessionDeleted" />
+
+    <div class="chat-container">
+        <ChatHeader Title="@CopilotChatDefaults.HeaderText" />
+
+        @if (ActiveMessages.Count == 0 && !_isThinking)
+        {
+            <ChatSuggestions Suggestions="CopilotChatDefaults.PromptSuggestions"
+                             OnSuggestionClicked="HandleSuggestionClicked" />
+        }
+        else
+        {
+            <ChatMessageList Messages="ActiveMessages" IsThinking="_isThinking" />
+        }
+
+        <ChatInput OnMessageSent="HandleMessageSent" IsDisabled="_isThinking" />
+    </div>
+</div>
+
+@code {
+    private readonly List<ChatSessionInfo> _sessions = new();
+    private string _activeSessionId = string.Empty;
+    private bool _isThinking;
+    private int _sessionCounter;
+
+    private List<ChatMessageViewModel> ActiveMessages =>
+        _sessions.FirstOrDefault(s => s.Id == _activeSessionId)?.Messages ?? new();
+
+    protected override void OnInitialized()
+    {
+        CreateNewSession();
+    }
+
+    private void CreateNewSession()
+    {
+        _sessionCounter++;
+        var session = new ChatSessionInfo
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            Title = $"Chat {_sessionCounter}",
+            Messages = new()
+        };
+        _sessions.Insert(0, session);
+        _activeSessionId = session.Id;
+    }
+
+    private void HandleNewChat()
+    {
+        CreateNewSession();
+    }
+
+    private void HandleSessionSelected(string sessionId)
+    {
+        if (_isThinking) return;
+        _activeSessionId = sessionId;
+    }
+
+    private void HandleSessionDeleted(string sessionId)
+    {
+        if (_isThinking) return;
+        var session = _sessions.FirstOrDefault(s => s.Id == sessionId);
+        if (session is null || _sessions.Count <= 1) return;
+
+        _sessions.Remove(session);
+        if (_activeSessionId == sessionId)
+            _activeSessionId = _sessions[0].Id;
+    }
+
+    private async Task HandleSuggestionClicked(string prompt)
+    {
+        await SendMessage(prompt);
+    }
+
+    private async Task HandleMessageSent(string message)
+    {
+        await SendMessage(message);
+    }
+
+    private async Task SendMessage(string prompt)
+    {
+        if (string.IsNullOrWhiteSpace(prompt) || _isThinking) return;
+
+        var messages = ActiveMessages;
+        messages.Add(new ChatMessageViewModel("user", prompt));
+        _isThinking = true;
+        StateHasChanged();
+
+        try
+        {
+            var chatMessages = new List<ChatMessage>
+            {
+                new(ChatRole.User, prompt)
+            };
+
+            var response = await ChatClient.GetResponseAsync(chatMessages);
+            var content = response.Messages.LastOrDefault()?.Text ?? "No response.";
+            var html = CopilotChatDefaults.ConvertMarkdownToHtml(content);
+
+            messages.Add(new ChatMessageViewModel("assistant", content, html));
+
+            // Update session title from first user message
+            var session = _sessions.FirstOrDefault(s => s.Id == _activeSessionId);
+            if (session is not null && session.Messages.Count(m => m.Role == "user") == 1)
+            {
+                session.Title = prompt.Length > 30 ? prompt[..30] + "…" : prompt;
+            }
+        }
+        catch (Exception ex)
+        {
+            messages.Add(new ChatMessageViewModel("assistant", $"Error: {ex.Message}"));
+        }
+        finally
+        {
+            _isThinking = false;
+            StateHasChanged();
+        }
+    }
+
+    public record ChatMessageViewModel(string Role, string Content, string? HtmlContent = null);
+
+    public class ChatSessionInfo
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = "New Chat";
+        public List<ChatMessageViewModel> Messages { get; set; } = new();
+    }
+}
